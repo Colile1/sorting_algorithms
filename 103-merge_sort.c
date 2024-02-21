@@ -1,90 +1,132 @@
 #include "sort.h"
-#include <stdio.h>
 #include <stdlib.h>
-
-void merge(int *array, int left, int mid, int right, size_t size);
-void top_down_split(int *array, int left, int right, size_t size);
+#include <stdio.h>
 
 /**
- * merge - Merges two subarrays 
- * @array: Array to sort
- * @left: Left subarray index
- * @mid: Mid point 
- * @right: Right subarray index
- * @size: Size of original array
+ * print_left_right - print left and right partitions
+ * @array: array
+ * @size: size of second array
+ * @first: initial position
+ * @mid: middle position
  */
-void merge(int *array, int left, int mid, int right, size_t size)
+void print_left_right(int *array, int size, int first, int mid)
 {
-  int *tmp = malloc(sizeof(int) * size);
-  int i = left, j = mid + 1, k = left;
+	int k;
 
-  printf("Merging...\n[left]: ");
-  print_array(array + left, mid - left + 1);
+	printf("Merging...\n");
+	printf("[left]: ");
+	k = first;
+	while (k < mid)
+	{
+		if (k != mid - 1)
+			printf("%d, ", array[k]);
+		else
+			printf("%d\n", array[k]);
+		k++;
+	}
 
-  printf("[right]: ");
-  print_array(array + mid + 1, right - mid);
-
-  while(i <= mid && j <= right) {
-    if(array[i] <= array[j]) {
-      tmp[k] = array[i];
-      i++;
-    } else {
-      tmp[k] = array[j];
-      j++;
-    }
-    k++;
-  }
-
-  while(i <= mid) {
-    tmp[k] = array[i];
-    i++;
-    k++;
-  }
-
-  while(j <= right) {
-    tmp[k] = array[j];
-    j++;
-    k++; 
-  }
-
-  printf("[Done]: ");
-  print_array(tmp + left, right - left + 1);
-  printf("\n");
-
-  for(i = left; i <= right; i++) {
-    array[i] = tmp[i];
-  }
-
-  free(tmp);
+	printf("[right]: ");
+	k = mid;
+	while (k < size)
+	{
+		if (k < size - 1)
+			printf("%d, ", array[k]);
+		else
+			printf("%d\n", array[k]);
+		k++;
+	}
 }
 
 /**
- * top_down_split - Splits array recursively
- * @array: Array to sort 
- * @left: Left index
- * @right: Right index
- * @size: Size of original array
+ * merge - merge the values in the position of array
+ * @array: first array
+ * @size: size of second array
+ * @cpy: copy of array
+ * @first: initial position
+ * @mid: middle position
+ * first one of the second array
  */
-void top_down_split(int *array, int left, int right, size_t size) 
+void merge(int *array, int size, int first, int mid, int *cpy)
 {
-  if (right - left <= 0)
-    return;
+	int i, j, k;
 
-  int mid = (left + right) / 2;
+	print_left_right(array, size, first, mid);
 
-  top_down_split(array, left, mid, size);
-  top_down_split(array, mid + 1, right, size);
+	i = first;
+	j = mid;
 
-  merge(array, left, mid, right, size);
+	printf("[Done]: ");
+	k = first;
+	while (k < size)
+	{
+		if (i < mid && (j >= size || array[i] <= array[j]))
+		{
+			cpy[k] = array[i];
+			i++;
+		}
+		else
+		{
+			cpy[k] = array[j];
+			j++;
+		}
+		if (k < size - 1)
+			printf("%d, ", cpy[k]);
+		else
+			printf("%d\n", cpy[k]);
+		k++;
+	}
+}
+/**
+ * mergeSort - array separator
+ * @cpy: copy of array
+ * @first: initial position
+ * @size: size of the original  array
+ * @array: the original array
+ */
+void mergeSort(int *cpy, int first, int size, int *array)
+{
+	int mid;
+
+	if (size - first < 2)
+		return;
+
+	mid = (size + first) / 2;
+
+	mergeSort(array, first, mid, cpy);
+	mergeSort(array, mid, size, cpy);
+
+	merge(cpy, size, first, mid, array);
+}
+/**
+ * copy_array - copy array of int
+ * @arr: array src
+ * @cpy: array dest
+ * @size : array size
+ */
+void copy_array(int *arr, int *cpy, int size)
+{
+	int i;
+
+	for (i = 0; i < (int)size; i++)
+		cpy[i] = arr[i];
 }
 
 /**
- * merge_sort - Sorts an array of integers in ascending
- *              order using the merge sort algorithm
- * @array: The array to sort
- * @size: The size of the array
+ * merge_sort - create partition and copy
+ * @array: array
+ * @size : array size
  */
 void merge_sort(int *array, size_t size)
 {
-  top_down_split(array, 0, size - 1, size);
+	int *cpy;
+
+	cpy = malloc(sizeof(int) * size - 1);
+
+	if (cpy == NULL)
+		return;
+
+	copy_array(array, cpy, size);
+
+	mergeSort(cpy, 0, size, array);
+	free(cpy);
 }
