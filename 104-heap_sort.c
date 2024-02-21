@@ -1,7 +1,7 @@
 #include "sort.h"
 
-void swap(int *a, int *b, int *array)
-void siftDown(int *array, int size, int i)
+void swap(int *a, int *b, int *array);
+void siftDown(int *array, int size, int i);
 
 
 /**

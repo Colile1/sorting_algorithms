@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void merge(int *array, int left, int mid, int right, size_t size);
+void top_down_split(int *array, int left, int right, size_t size);
+
 /**
  * merge - Merges two subarrays 
  * @array: Array to sort
