@@ -12,11 +12,11 @@ void quick_sort(int *array, size_t size);
  */
 void swap_ints(int *a, int *b)
 {
-    int tmp;
+	int tmp;
 
-    tmp = *a;
-    *a = *b;
-    *b = tmp;
+	tmp = *a;
+	*a = *b;
+	*b = tmp;
 }
 
 /**
@@ -31,23 +31,29 @@ void swap_ints(int *a, int *b)
  */
 int lomuto_partition(int *array, size_t size, int left, int right)
 {
-    int pivot = array[right];
-    int i = left - 1;
+	int *pivot, above, below;
 
-    for (int j = left; j < right; j++)
-    {
-        if (array[j] <= pivot)
-        {
-            i++;
-            swap_ints(&array[i], &array[j]);
-            print_array(array, size);
-        }
-    }
+	pivot = array + right;
+	for (above = below = left; below < right; below++)
+	{
+		if (array[below] < *pivot)
+		{
+			if (above < below)
+			{
+				swap_ints(array + below, array + above);
+				print_array(array, size);
+			}
+			above++;
+		}
+	}
 
-    swap_ints(&array[i + 1], &array[right]);
-    print_array(array, size);
+	if (array[above] > *pivot)
+	{
+		swap_ints(array + above, pivot);
+		print_array(array, size);
+	}
 
-    return i + 1;
+	return (above);
 }
 
 /**
@@ -61,13 +67,14 @@ int lomuto_partition(int *array, size_t size, int left, int right)
  */
 void lomuto_sort(int *array, size_t size, int left, int right)
 {
-    if (left < right)
-    {
-        int partition = lomuto_partition(array, size, left, right);
+	int part;
 
-        lomuto_sort(array, size, left, partition - 1);
-        lomuto_sort(array, size, partition + 1, right);
-    }
+	if (right - left > 0)
+	{
+		part = lomuto_partition(array, size, left, right);
+		lomuto_sort(array, size, left, part - 1);
+		lomuto_sort(array, size, part + 1, right);
+	}
 }
 
 /**
@@ -81,8 +88,8 @@ void lomuto_sort(int *array, size_t size, int left, int right)
  */
 void quick_sort(int *array, size_t size)
 {
-    if (array == NULL || size < 2)
-        return;
+	if (array == NULL || size < 2)
+		return;
 
-    lomuto_sort(array, size, 0, size - 1);
+	lomuto_sort(array, size, 0, size - 1);
 }
